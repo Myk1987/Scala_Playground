@@ -44,10 +44,11 @@ object Main {
    * Exercise 3
    */
   def countChange(money: Int, coins: List[Int]): Int =
-    coins.map((coin: Int) => money - coin / abs(money - coin) match {
-      case 0 => 1
-      case -1  => 0
-      case 1 =>  countChange(money - coin, coins)
-    }
-    ).sum
+    if (money == 0) 0
+    else if (coins.isEmpty) 0
+    else if (money == coins.head )  1 + countChange(money, coins.tail)
+    else if (coins.head > money)    countChange(money, coins.tail)
+    else if (2*coins.head <= money) countChange(money - coins.head, coins) + countChange(money, coins.tail)
+    else if (coins.head < money)    countChange(money - coins.head, coins.tail) + countChange(money, coins.tail)
+    else 0
 }
