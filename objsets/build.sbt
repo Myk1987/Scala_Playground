@@ -1,6 +1,6 @@
 submitProjectName := "objsets"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.0"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -15,6 +15,7 @@ javaOptions += "-Xmx2G"
 
 parallelExecution in Test := false
 
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
 
 // See documentation in ProgFunBuild.scala
 projectDetailsMap := {

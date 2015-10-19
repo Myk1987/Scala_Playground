@@ -82,34 +82,41 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def descendingByRetweet: TweetList = ???
+  def descendingByRetweet: TweetList = {
+    if (isEmpty) Nil
+    else {
+      val mostRet: Tweet = mostRetweeted
+      new Cons(mostRet, remove(mostRet).descendingByRetweet)
+    }
+  }
 
-  /**
-   * The following methods are already implemented
-   */
 
-  /**
-   * Returns a new `TweetSet` which contains all elements of this set, and the
-   * the new element `tweet` in case it does not already exist in this set.
-   *
-   * If `this.contains(tweet)`, the current set is returned.
-   */
-  def incl(tweet: Tweet): TweetSet
+/**
+ * The following methods are already implemented
+ */
 
-  /**
-   * Returns a new `TweetSet` which excludes `tweet`.
-   */
-  def remove(tweet: Tweet): TweetSet
+/**
+ * Returns a new `TweetSet` which contains all elements of this set, and the
+ * the new element `tweet` in case it does not already exist in this set.
+ *
+ * If `this.contains(tweet)`, the current set is returned.
+ */
+def incl (tweet: Tweet): TweetSet
 
-  /**
-   * Tests if `tweet` exists in this `TweetSet`.
-   */
-  def contains(tweet: Tweet): Boolean
+/**
+ * Returns a new `TweetSet` which excludes `tweet`.
+ */
+def remove (tweet: Tweet): TweetSet
 
-  /**
-   * This method takes a function and applies it to every element in the set.
-   */
-  def foreach(f: Tweet => Unit): Unit
+/**
+ * Tests if `tweet` exists in this `TweetSet`.
+ */
+def contains (tweet: Tweet): Boolean
+
+/**
+ * This method takes a function and applies it to every element in the set.
+ */
+def foreach (f: Tweet => Unit): Unit
 }
 
 class Empty extends TweetSet {
@@ -136,8 +143,8 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   def isEmpty = false
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
-    if (p(this.elem)) acc.incl(this.elem)
-    this.right.filterAcc(p, this.left.filterAcc(p, acc))
+    if (p(this.elem)) this.right.filterAcc(p, this.left.filterAcc(p, acc.incl(elem)))
+    else this.right.filterAcc(p, this.left.filterAcc(p, acc))
   }
 
   def mostRetweeted: Tweet = {
@@ -213,14 +220,14 @@ object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-  lazy val googleTweets: TweetSet = ???
-  lazy val appleTweets: TweetSet = ???
+  lazy val googleTweets: TweetSet = TweetReader.allTweets.filter((t:Tweet) => google.exists( w => t.text.contains(w)))
+  lazy val appleTweets: TweetSet = TweetReader.allTweets.filter((t:Tweet) => apple.exists( w => t.text.contains(w)))
 
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-  lazy val trending: TweetList = ???
+  lazy val trending: TweetList = googleTweets.union(appleTweets).descendingByRetweet
 }
 
 object Main extends App {
