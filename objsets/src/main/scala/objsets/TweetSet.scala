@@ -141,8 +141,18 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   def mostRetweeted: Tweet = {
-//    if (this.left.isEmpty && this.right.isEmpty) this.elem
-    filterAcc()
+    def moreRetweets(a: Tweet, b: Tweet): Tweet = {
+      if (a.retweets > b.retweets) a
+      else b
+    }
+
+    lazy val leftMostRetweeted = this.left.mostRetweeted
+    lazy val rightMostRetweeted = this.right.mostRetweeted
+
+    if (this.left.isEmpty && this.right.isEmpty) this.elem
+    else if (this.left.isEmpty) moreRetweets(this.elem, rightMostRetweeted)
+    else if (this.right.isEmpty) moreRetweets(this.elem, leftMostRetweeted)
+    else moreRetweets(this.elem, moreRetweets(leftMostRetweeted, rightMostRetweeted))
   }
 
   /**
