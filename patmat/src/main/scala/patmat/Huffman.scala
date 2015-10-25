@@ -52,7 +52,7 @@ object Huffman {
    * This function computes for each unique character in the list `chars` the number of
    * times it occurs. For example, the invocation
    *
-   * times(List('a', 'b', 'a'))
+   * times(('Lista', 'b', 'a'))
    *
    * should return the following (the order of the resulting list is not important):
    *
@@ -77,6 +77,7 @@ object Huffman {
    * }
    */
   def times(chars: List[Char]): List[(Char, Int)] = {
+
     
 
   }
